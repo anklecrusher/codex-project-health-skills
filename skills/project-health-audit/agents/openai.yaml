@@ -1,0 +1,4 @@
+interface:
+  display_name: "Project Health Audit"
+  short_description: "Audit project structure and skill hygiene."
+  default_prompt: "Audit a project for structure health, skill surface hygiene, and navigation completeness. Produce a read-only, prioritized report with findings, likely false positives, and confirmation-gated recommendations."

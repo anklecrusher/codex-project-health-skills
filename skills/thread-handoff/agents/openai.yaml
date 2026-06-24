@@ -1,0 +1,4 @@
+interface:
+  display_name: "Thread Handoff"
+  short_description: "Compress long tasks into a clean handoff for the next thread."
+  default_prompt: "Turn a long-running task into a concise handoff package. Capture goal, current state, completed work, open risks, verification status, and the next safest step for a new thread."
