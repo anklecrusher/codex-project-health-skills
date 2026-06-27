@@ -3,7 +3,7 @@
 Two lightweight Codex skills for keeping long-running AI projects understandable:
 
 - `project-health-audit`: scan project structure, entrypoints, skill hygiene, and navigation health.
-- `thread-handoff`: compress long tasks into a clean handoff package for a new thread.
+- `thread-handoff`: compress long tasks into a faithful context summary and optionally deliver it to a new thread.
 
 Chinese documentation: [README.zh-CN.md](README.zh-CN.md)
 
@@ -20,7 +20,8 @@ AI coding and knowledge-work projects tend to fail in quiet ways:
 These skills split the work into two focused actions:
 
 1. audit the project without changing it;
-2. package the current task state so another thread can continue safely.
+2. package the current task state so another thread can continue safely;
+3. deliver that package to another thread when thread-management tools are available.
 
 ## Included Skills
 
@@ -48,16 +49,23 @@ The expected output separates:
 
 Use this when a task is too long, has been compacted, needs a fresh thread, or must be handed to another agent.
 
+Its primary job is compression with fidelity: preserve the decisions, constraints, evidence, current state, and next step while dropping noise. It is not a project audit skill.
+
 It captures:
 
 - role and scope;
 - goal;
+- must-preserve constraints;
 - current state;
 - completed work;
 - verification status;
 - blockers and open risks;
 - next safest step;
+- failed paths not to repeat;
+- possibly missing or unchecked context;
 - context the next thread can ignore.
+
+If the user asks to send the handoff to a new or existing thread, the skill should use available Codex thread-management tools. If no delivery tool is available, it falls back to a copyable handoff summary.
 
 ## Installation
 
@@ -78,10 +86,10 @@ cp -R codex-project-health-skills/skills/thread-handoff ~/.codex/skills/
 On Windows PowerShell:
 
 ```powershell
-$skills = Join-Path $env:USERPROFILE ".codex\skills"
+$skills = Join-Path $env:USERPROFILE .codex\skills
 New-Item -ItemType Directory -Force -Path $skills | Out-Null
-Copy-Item -Recurse -Force ".\codex-project-health-skills\skills\project-health-audit" $skills
-Copy-Item -Recurse -Force ".\codex-project-health-skills\skills\thread-handoff" $skills
+Copy-Item -Recurse -Force .\codex-project-health-skills\skills\project-health-audit $skills
+Copy-Item -Recurse -Force .\codex-project-health-skills\skills\thread-handoff $skills
 ```
 
 Restart Codex or open a new thread if the skill list does not refresh immediately.
@@ -122,6 +130,7 @@ Use `thread-handoff` when:
 - another agent or thread needs to continue the task;
 - you need a concise restart point;
 - the current discussion contains useful decisions mixed with noisy exploration.
+- you want the current thread to check that the summary includes the important available context before transfer.
 
 Use both when:
 
@@ -136,7 +145,8 @@ Both skills are intentionally conservative:
 - do not delete or move files without explicit user confirmation;
 - separate real issues from project-specific exceptions;
 - avoid treating every missing code artifact as a failure;
-- preserve verification evidence instead of trusting "done" claims.
+- preserve verification evidence instead of trusting done claims;
+- do not claim thread delivery succeeded unless a thread-management tool actually succeeded.
 
 ## Repository Structure
 
